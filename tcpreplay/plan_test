@@ -1,12 +1,11 @@
 #!/bin/bash
-all=(30 40 45 50 55 60)
+#all=(30 40 45 50 55 60)
+all=(30)
 for i in ${all[*]} 
 do
     cur=`date +%Y%m%d_%H%M%S`
-    testname="DNSmbp$i_${cur}"
-    echo `bash start_test ${testname} $i`
+    testname="DNSmbp${i}_${cur}"
+    echo `bash start_test ${testname} ${i}`
     sleep 1
     echo "******************"
 done
-#mv DNSmbp* test_DNS/ 
-mv DNSmbp* /fileserver/
