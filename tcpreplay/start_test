@@ -12,9 +12,13 @@ if [[ $2 == "" ]];then
 fi
 carg=$2
 mkdir $testname
-sshpass -p threatbook ssh root@192.168.100.121 'echo "">/tmp/test_tip.out' 
+outfile="test_tip.out"
+#cp out到文件服务器
+sshpass -p threatbook scp -r test_file root@192.168.100.121:~
+
+sshpass -p threatbook ssh root@192.168.100.121 "echo ''>/tmp/${outfile}"
 echo "************check test_tip.out"
-sshpass -p threatbook ssh root@192.168.100.121 'cat /tmp/test_tip.out|wc -l' 
+sshpass -p threatbook ssh root@192.168.100.121 "cat /tmp/${outfile}|wc -l" 
 
 curl http://192.168.100.121:8089/status >t_${testname}.log
 echo "****************************" >>t_${testname}.log
@@ -22,5 +26,9 @@ time tcpreplay --mbps=${carg} -i ens224 -l 500 dns_20327.pcap >>t_${testname}.lo
 echo "****************************" >>t_${testname}.log
 curl http://192.168.100.121:8089/status >>t_${testname}.log
 
-sshpass -p threatbook scp root@192.168.100.121:/tmp/test_tip.out ${testname}/
 mv t_${testname}.log ${testname}/
+mv -r ${testname} /fileserver/
+
+#save out
+#sshpass -p threatbook scp root@192.168.100.121:/tmp/test_tip.out ${testname}/
+sshpass -p threatbook ssh root@192.168.100.121 "bash ~/test_file ${outfile} ${testname}"
