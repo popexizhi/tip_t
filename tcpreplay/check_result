@@ -3,7 +3,7 @@
 check_log()
 {
     res_log=$1
-    echo "***********************${res_log}"
+    echo "***********************check_log::${res_log}"
     pre_count=`cat ${res_log}|grep "Actual:"|sed 's/Actual: //g'|sed 's/ .*//g'`
     echo "pre_count:${pre_count}"
     
@@ -16,18 +16,32 @@ check_log()
     RES="${RES} \n ${res_log}:[${resdiff}]"
 }
 
+check_out()
+{
+    res_log=$1
+    echo "***********************check_out::${res_log}"
+    type_str='"type":"dns"'
+    out_num=`cat $1|grep ${type_str}|wc -l`
+    echo "out_num:${out_num}"
+    RES="${RES} \n${res_log}[out_num:${out_num}]"
+
+}
+
 get_res_dir() 
 {
     RES=""
-    for dir in `ls -all /fileserver/|grep "DNS"|awk '{print $9}'`
+    BASEPH="/fileserver"
+    #BASEPH="/fileserver/old_tmp"
+    for dir in `ls -all ${BASEPH}/|grep "DNS"|awk '{print $9}'`
     do
-        res_log=`ls /fileserver/${dir}|grep log`
-        res_log="/fileserver/${dir}/${res_log}"
-        res_out=`ls /fileserver/${dir}|grep out`
-        res_out="/fileserver/${dir}/${res_out}"
+        res_log=`ls ${BASEPH}/${dir}|grep log`
+        res_log="${BASEPH}/${dir}/${res_log}"
+        res_out=`ls ${BASEPH}/${dir}|grep out`
+        res_out="${BASEPH}/${dir}/${res_out}"
 
         echo "${res_log}---${res_out}" 
         check_log ${res_log}
+        check_out ${res_out}
     done
     echo -e $RES
 }
