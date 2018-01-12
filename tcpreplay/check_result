@@ -1,0 +1,9 @@
+#!/bin/bash
+
+pre_count=`cat DNSmbp30/t_DNSmbp30.log|grep "Actual:"|sed 's/Actual: //g'|sed 's/ .*//g'`
+echo "pre_count:${pre_count}"
+
+start_count=`head -n 1 DNSmbp30/t_DNSmbp30.log|grep '{"process_count"'|sed 's/.*capture":{"process_count"://g'|sed 's/,.*//g'`
+end_count=`tail -n 1 DNSmbp30/t_DNSmbp30.log|grep '{"process_count"'|sed 's/.*capture":{"process_count"://g'|sed 's/,.*//g'`
+curl_count_all=$((end_count - start_count))
+echo "${end_count} - ${start_count} = ${curl_count_all}"
