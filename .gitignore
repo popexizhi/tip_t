@@ -4,6 +4,9 @@
 #doing_exe
 *.do
 
+#log
+*/*.log
+
 #tcpreplay/
 tcpreplay/Idns/
 tcpreplay/dns/
