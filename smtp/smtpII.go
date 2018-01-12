@@ -5,7 +5,7 @@ import (
     "net/smtp"
     "strings"
 )
-
+//https://studygolang.com/articles/2098
 func SendToMail(user, password, host, to, subject, body, mailtype string) error {
     hp := strings.Split(host, ":")
     auth := smtp.PlainAuth("", user, password, hp[0])

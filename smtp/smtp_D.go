@@ -10,19 +10,20 @@ func main() {
     auth := smtp.PlainAuth(
         "",
         "threatbookt@126.com",
-        "threatbookt12345",
-        "mail.126.com",
+        "threatbook12345",
+        "smtp.126.com",
     )
     // Connect to the server, authenticate, set the sender and recipient,
     // and send the email all in one step.
     err := smtp.SendMail(
-        "mail.126.com:25",
+        "smtp.126.com:25",
         auth,
         "threatbookt@126.com",
         []string{"threatbookt@126.com"},
-        []byte("This is the email body."),
+        []byte("go send This is the email body."),
     )
     if err != nil {
         log.Fatal(err)
     }
+    log.Print("send pass")
 }
