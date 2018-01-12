@@ -1,0 +1,9 @@
+#!/bin/bash
+all=(30 40 45 50 55 60)
+for i in ${all[*]} 
+do
+    testname="DNSmbp$i"
+    echo `bash start_test ${testname} $i`
+    sleep 1
+    echo "******************"
+done
