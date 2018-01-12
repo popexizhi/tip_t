@@ -1,9 +1,38 @@
 #!/bin/bash
 
-pre_count=`cat DNSmbp30/t_DNSmbp30.log|grep "Actual:"|sed 's/Actual: //g'|sed 's/ .*//g'`
-echo "pre_count:${pre_count}"
+check_log()
+{
+    res_log=$1
+    echo "***********************${res_log}"
+    pre_count=`cat ${res_log}|grep "Actual:"|sed 's/Actual: //g'|sed 's/ .*//g'`
+    echo "pre_count:${pre_count}"
+    
+    start_count=`head -n 1 ${res_log}|grep '{"process_count"'|sed 's/.*capture":{"process_count"://g'|sed 's/,.*//g'`
+    end_count=`tail -n 1 ${res_log}|grep '{"process_count"'|sed 's/.*capture":{"process_count"://g'|sed 's/,.*//g'`
+    curl_count_all=$((end_count - start_count))
+    echo "${end_count} - ${start_count} = ${curl_count_all}"
+    resdiff=$((pre_count-curl_count_all))
+    echo "[res]${resdiff}"
+    RES="${RES} \n ${res_log}:[${resdiff}]"
+}
 
-start_count=`head -n 1 DNSmbp30/t_DNSmbp30.log|grep '{"process_count"'|sed 's/.*capture":{"process_count"://g'|sed 's/,.*//g'`
-end_count=`tail -n 1 DNSmbp30/t_DNSmbp30.log|grep '{"process_count"'|sed 's/.*capture":{"process_count"://g'|sed 's/,.*//g'`
-curl_count_all=$((end_count - start_count))
-echo "${end_count} - ${start_count} = ${curl_count_all}"
+get_res_dir() 
+{
+    RES=""
+    for dir in `ls -all /fileserver/|grep "DNS"|awk '{print $9}'`
+    do
+        res_log=`ls /fileserver/${dir}|grep log`
+        res_log="/fileserver/${dir}/${res_log}"
+        res_out=`ls /fileserver/${dir}|grep out`
+        res_out="/fileserver/${dir}/${res_out}"
+
+        echo "${res_log}---${res_out}" 
+        check_log ${res_log}
+    done
+    echo -e $RES
+}
+
+
+#check_log
+get_res_dir 
+
