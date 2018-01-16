@@ -1,11 +1,16 @@
 #!/bin/bash
 #all=(30 40 45 50 55 60)
-all=(30)
+all=(5)
+type=$1
+if [ "${type}" == "" ];then
+    type="capture"
+fi
 for i in ${all[*]} 
 do
     cur=`date +%Y%m%d_%H%M%S`
-    testname="DNSmbp${i}_${cur}"
-    echo `bash start_test ${testname} ${i}`
-    sleep 1
+    testname="DNSmbp${i}_${cur}_${type}"
+    echo `bash start_test_${type} ${testname} ${i}`
+    echo "sleep 5min wait next test for io******************"
+    sleep 30
     echo "******************"
 done
