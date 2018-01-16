@@ -6,14 +6,19 @@ check_log()
     echo "***********************check_log::${res_log}"
     pre_count=`cat ${res_log}|grep "Actual:"|sed 's/Actual: //g'|sed 's/ .*//g'`
     echo "pre_count:${pre_count}"
+    t_count="process_count" 
+    #t_type="capture"
+    t_type="sensor"
     
-    start_count=`head -n 1 ${res_log}|grep '{"process_count"'|sed 's/.*capture":{"process_count"://g'|sed 's/,.*//g'`
-    end_count=`tail -n 1 ${res_log}|grep '{"process_count"'|sed 's/.*capture":{"process_count"://g'|sed 's/,.*//g'`
+    start_count=`head -n 1 ${res_log}|grep "{\"${t_count}\""|sed "s/.*${t_type}\":{\"${t_count}\"://g"|sed 's/,.*//g'`
+    end_count=`tail -n 1 ${res_log}|grep "{\"${t_count}\""|sed "s/.*${t_type}\":{\"${t_count}\"://g"|sed 's/,.*//g'`
+
     curl_count_all=$((end_count - start_count))
     echo "${end_count} - ${start_count} = ${curl_count_all}"
     resdiff=$((pre_count-curl_count_all))
-    echo "[res]${resdiff}"
-    RES="${RES} \n ${res_log}:[${resdiff}]"
+    resper=`awk 'BEGIN{printf "%.3f%\n",('${curl_count_all}'/'${pre_count}')*100}'`
+    echo "[res]${resdiff}:${resper}"
+    RES="${RES} \n ${res_log}:[${resdiff}:${resper}]"
 }
 
 check_out()
@@ -30,8 +35,8 @@ check_out()
 get_res_dir() 
 {
     RES=""
-    BASEPH="/fileserver"
-    #BASEPH="/fileserver/old_tmp"
+    #BASEPH="/fileserver"
+    BASEPH="/fileserver/sensor"
     for dir in `ls -all ${BASEPH}/|grep "DNS"|awk '{print $9}'`
     do
         res_log=`ls ${BASEPH}/${dir}|grep log`
@@ -41,12 +46,12 @@ get_res_dir()
 
         echo "${res_log}---${res_out}" 
         check_log ${res_log}
-        check_out ${res_out}
+        #check_out ${res_out}
     done
     echo -e $RES
 }
 
 
-#check_log
-get_res_dir 
+check_log $1
+#get_res_dir 
 
