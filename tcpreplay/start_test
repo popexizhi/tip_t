@@ -1,4 +1,5 @@
 #!/bin/bash
+
 echo "save_dir:$1; 控制参数:--mbps:$2"
 
 if [[ $1 == "" ]];then
@@ -14,7 +15,7 @@ carg=$2
 mkdir $testname
 outfile="test_tip.out"
 #cp out到文件服务器
-sshpass -p threatbook scp -r test_file root@192.168.100.121:~
+#sshpass -p threatbook scp -r test_file root@192.168.100.121:~
 
 sshpass -p threatbook ssh root@192.168.100.121 "echo ''>/tmp/${outfile}"
 echo "************check test_tip.out"
@@ -22,13 +23,15 @@ sshpass -p threatbook ssh root@192.168.100.121 "cat /tmp/${outfile}|wc -l"
 
 curl http://192.168.100.121:8089/status >t_${testname}.log
 echo "****************************" >>t_${testname}.log
-time tcpreplay --mbps=${carg} -i ens224 -l 500 dns_20327.pcap >>t_${testname}.log
+time tcpreplay --mbps=${carg} -i ens224 -l 100 dns_20327.pcap >>t_${testname}.log
 echo "****************************" >>t_${testname}.log
+sleep 10 #防止io排队问题，次为止next修改为从second_process_count持续5s为0后再次统计
 curl http://192.168.100.121:8089/status >>t_${testname}.log
+sleep 2
 
 mv t_${testname}.log ${testname}/
-mv -r ${testname} /fileserver/
+mv ${testname} /fileserver/
 
 #save out
 #sshpass -p threatbook scp root@192.168.100.121:/tmp/test_tip.out ${testname}/
-sshpass -p threatbook ssh root@192.168.100.121 "bash ~/test_file ${outfile} ${testname}"
+#sshpass -p threatbook ssh root@192.168.100.121 "bash ~/test_file ${outfile} ${testname}"

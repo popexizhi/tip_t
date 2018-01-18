@@ -7,8 +7,8 @@ check_log()
     pre_count=`cat ${res_log}|grep "Actual:"|sed 's/Actual: //g'|sed 's/ .*//g'`
     echo "pre_count:${pre_count}"
     t_count="process_count" 
-    #t_type="capture"
-    t_type="sensor"
+    t_type="capture"
+    #t_type="sensor"
     
     start_count=`head -n 1 ${res_log}|grep "{\"${t_count}\""|sed "s/.*${t_type}\":{\"${t_count}\"://g"|sed 's/,.*//g'`
     end_count=`tail -n 1 ${res_log}|grep "{\"${t_count}\""|sed "s/.*${t_type}\":{\"${t_count}\"://g"|sed 's/,.*//g'`
@@ -17,7 +17,8 @@ check_log()
     echo "${end_count} - ${start_count} = ${curl_count_all}"
     resdiff=$((pre_count-curl_count_all))
     resper=`awk 'BEGIN{printf "%.3f%\n",('${curl_count_all}'/'${pre_count}')*100}'`
-    echo "[res]${resdiff}:${resper}"
+    resperC=`awk 'BEGIN{printf "%.3f%\n",('${curl_count_all}'/('${pre_count}'*1.2))*100}'`
+    echo "[res]${resdiff}:${resperC}[${resper}]"
     RES="${RES} \n ${res_log}:[${resdiff}:${resper}]"
 }
 

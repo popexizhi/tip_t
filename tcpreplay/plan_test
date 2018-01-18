@@ -1,6 +1,6 @@
 #!/bin/bash
 #all=(30 40 45 50 55 60)
-all=(5)
+all=(50 50)
 type=$1
 if [ "${type}" == "" ];then
     type="capture"
