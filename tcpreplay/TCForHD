@@ -1,0 +1,23 @@
+#!/bin/bash
+tc_use()
+{
+    local try_time=3            #延时倍数，此位置为sleep的使用基线
+    local continue_time=$((48 * try_time))  #当前pcap包,1mbps/-line=1 使用48s
+    local http_carg=$1
+    local dns_carg=$2
+    local hnum=$((http_carg * try_time))
+    local dnum=$((dns_carg * 3 * try_time))
+    echo "*****http_carg:${http_carg};dns:${dns_carg};http_num[${hnum}];dns_num[${dnum}]"
+    time tcpreplay --mbps=${http_carg} -i em2 -l ${hnum} http5000_cnblogs.pcap&
+    time tcpreplay --mbps=${dns_carg} -i em2 -l ${dnum} dns_20327.pcap&
+    local use_time=$((continue_time + 10))
+    echo `sleep ${use_time}`
+}
+
+tc_use 30 20
+tc_use 10 10
+tc_use 1 12
+tc_use 30 2
+
+
+
