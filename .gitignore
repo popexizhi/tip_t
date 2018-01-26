@@ -16,6 +16,7 @@ tcpreplay/t_IIdns.log
 tcpreplay/test.cache
 tcpreplay/test_DNS/
 tcpreplay/tmp/
+tcpreplay/savelog/
 
 smtp/pop3/
 smtp/smtpII
