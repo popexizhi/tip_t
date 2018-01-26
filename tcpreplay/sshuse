@@ -1,0 +1,22 @@
+#!/bin/bash
+
+PWD="threatbook"
+USR="root"
+IP="192.168.100.171"
+ssh_doing()
+{
+    echo "[ssh doing]:$1"
+    doing_str=$1
+    sshpass -p ${PWD} ssh ${USR}@${IP} "${doing_str}"
+
+}
+
+test()
+{
+    ssh_doing "pwd"
+    ssh_doing "cp /tmp/test_tip.out /tmp/test"
+    ssh_doing "ls -all /tmp/test_tip.out"
+
+}
+
+test
