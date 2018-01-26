@@ -9,7 +9,15 @@ check_log()
     t_count="process_count" 
     t_type="capture"
     #t_type="sensor"
-    
+    check_stat_log $1 $pre_count $t_type 
+}
+
+check_stat_log()
+{
+    res_log=$1
+    pre_count=$2
+    t_type=$3
+    t_count="process_count" 
     start_count=`head -n 1 ${res_log}|grep "{\"${t_count}\""|sed "s/.*${t_type}\":{\"${t_count}\"://g"|sed 's/,.*//g'`
     end_count=`tail -n 1 ${res_log}|grep "{\"${t_count}\""|sed "s/.*${t_type}\":{\"${t_count}\"://g"|sed 's/,.*//g'`
 
@@ -22,14 +30,44 @@ check_log()
     RES="${RES} \n ${res_log}:[${resdiff}:${resper}]"
 }
 
+check_complex_log()  #check complex result
+{
+    res_log=$1
+    check_tcpdump_logs ${res_log}
+    if [[ ${pre_count} == "" ]];then
+        echo "\${pre_count} is null ,err"
+        exit -1
+    fi
+    t_type="capture"
+    check_stat_log $1 ${pre_count} ${t_type}
+}
+
+check_tcpdump_logs()
+{
+    res_log=$1
+       
+    pre_count_http=`cat ${res_log}_http|grep "Actual:"|sed 's/Actual: //g'|sed 's/ .*//g'`
+    pre_count_dns=`cat ${res_log}_dns|grep "Actual:"|sed 's/Actual: //g'|sed 's/ .*//g'`
+    pre_count=$((pre_count_http + pre_count_dns))
+    echo "http_pre[${pre_count_http}];dns_pre[${pre_count_dns}];pre_count[${pre_count}]"
+}
+
+
+
 check_out()
 {
     res_log=$1
     echo "***********************check_out::${res_log}"
     type_str='"type":"dns"'
     out_num=`cat $1|grep ${type_str}|wc -l`
-    echo "out_num:${out_num}"
-    RES="${RES} \n${res_log}[out_num:${out_num}]"
+    out_num_dns=${out_num}
+
+    type_str='"type":"http"'
+    out_num=`cat $1|grep ${type_str}|wc -l`
+    out_num_http=${out_num}
+
+    echo "out_num:${out_num_dns};out_num_http:${out_num_http}"
+    RES="${RES} \n${res_log}[out_num_dns:${out_num_dns};out_num_http:${out_num_http}]"
 
 }
 
@@ -53,6 +91,7 @@ get_res_dir()
 }
 
 
-check_log $1
+#check_log $1
 #get_res_dir 
-
+#check_complex_log $1  #check complex result
+check_out $1/test_tip.out

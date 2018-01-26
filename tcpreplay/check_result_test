@@ -1,0 +1,33 @@
+#!/bin/bash
+#test case for check_result_test
+source check_result
+
+check_tcpdump_logs_test()
+{
+    td="testdata/t_COMmbpHTTP1_DNS1_20180126_143837_capture.log"
+    check_tcpdump_logs ${td} 
+    #154980  182943
+
+
+}
+
+check_complex_log_test()  #check complex result test
+{
+    td="testdata/t_COMmbpHTTP1_DNS1_20180126_143837_capture.log"
+    check_complex_log ${td}  #check complex result test
+    
+}
+
+
+check_stat_log_test()
+{
+    td="testdata/t_COMmbpHTTP1_DNS1_20180126_143837_capture.log"
+    check_stat_log ${td} 10000 capture
+}
+test()
+{
+    #check_tcpdump_logs_test
+    check_complex_log_test  #check complex result test
+    #check_stat_log_test
+}
+test
