@@ -5,7 +5,7 @@ source sshuse  #use for sshdoing
 tc_use()
 {
     #local try_time=3            #延时倍数，此位置为sleep的使用基线
-    local try_time=3            #延时倍数，此位置为sleep的使用基线
+    local try_time=5            #延时倍数，此位置为sleep的使用基线
     local continue_time=$((48 * try_time))  #当前pcap包,1mbps/-line=1 使用48s
     local http_carg=$1
     local dns_carg=$2
@@ -38,7 +38,7 @@ start_test()
     dns_c=$3
     setup
     curl http://192.168.100.171:8089/status>t_${testname}.log
-
+    echo -e "\n">>t_${testname}.log
     tc_use $http_c $dns_c t_${testname}.log
     curl http://192.168.100.171:8089/status>>t_${testname}.log
 
