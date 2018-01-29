@@ -19,6 +19,10 @@ check_stat_log()
     t_type=$3
     t_count="process_count" 
     start_count=`head -n 1 ${res_log}|grep "{\"${t_count}\""|sed "s/.*${t_type}\":{\"${t_count}\"://g"|sed 's/,.*//g'`
+    #echo "start_count:${start_count}"
+    if [[ ${start_count} == '{"Lock":{}' ]];then
+        start_count=0
+    fi
     end_count=`tail -n 1 ${res_log}|grep "{\"${t_count}\""|sed "s/.*${t_type}\":{\"${t_count}\"://g"|sed 's/,.*//g'`
 
     curl_count_all=$((end_count - start_count))
@@ -66,7 +70,7 @@ check_out()
     out_num=`cat $1|grep ${type_str}|wc -l`
     out_num_http=${out_num}
 
-    echo "out_num:${out_num_dns};out_num_http:${out_num_http}"
+    echo "out_num_dns:${out_num_dns};out_num_http:${out_num_http}"
     RES="${RES} \n${res_log}[out_num_dns:${out_num_dns};out_num_http:${out_num_http}]"
 
 }
@@ -93,5 +97,5 @@ get_res_dir()
 
 #check_log $1
 #get_res_dir 
-#check_complex_log $1  #check complex result
-check_out $1/test_tip.out
+check_complex_log $1  #check complex result
+#check_out $1/test_tip.out
