@@ -2,16 +2,18 @@
 test_single()
 {
     #all=(30 40 45 50 55 60)
-    all=(50 50)
+    all=(50)
     type=$1
+    #pro="DNS"
+    pro="HTTP"
     if [ "${type}" == "" ];then
         type="capture"
     fi
     for i in ${all[*]} 
     do
         cur=`date +%Y%m%d_%H%M%S`
-        testname="DNSmbp${i}_${cur}_${type}"
-        echo `bash start_test_${type} ${testname} ${i}`
+        testname="${pro}mbp${i}_${cur}_${type}"
+        echo `bash start_test_${type} ${testname} ${i} ${pro}`
         echo "sleep 5min wait next test for io******************"
         sleep 30
         echo "******************"
@@ -21,8 +23,8 @@ test_single()
 test_complex()
 {
     #http_mbp,dns_mbp
-    #all=(5,5 1,2 3,4)
-    all=(1,1)
+    all=(10,10)
+    #all=(10,10 100,200 200,100 20,50 30,20)
     echo -e "\n[test_complex]${all}***********************************\n"
     type=$1
     if [ "${type}" == "" ];then
@@ -41,5 +43,5 @@ test_complex()
     done
 }
 
-#test_single
-test_complex
+#test_single $1
+test_complex $1

@@ -42,7 +42,8 @@ check_complex_log()  #check complex result
         echo "\${pre_count} is null ,err"
         exit -1
     fi
-    t_type="capture"
+    #t_type="capture"
+    t_type="sensor"
     check_stat_log $1 ${pre_count} ${t_type}
 }
 
@@ -96,6 +97,6 @@ get_res_dir()
 
 
 #check_log $1
-#get_res_dir 
-check_complex_log $1  #check complex result
+get_res_dir 
+#check_complex_log $1  #check complex result
 #check_out $1/test_tip.out
